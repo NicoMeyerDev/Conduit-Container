@@ -1,0 +1,36 @@
+services:
+  frontend:
+    build: ./conduit-frontend-master
+    restart: unless-stopped
+    ports:
+      - "8282:80"
+    depends_on:
+     - backend  
+
+  backend:
+    build: ./conduit-backend-master
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: postgres:13
+    restart: unless-stopped
+    env_file:
+     - .env
+    volumes:
+     - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5 
+
+volumes:
+  postgres_data:

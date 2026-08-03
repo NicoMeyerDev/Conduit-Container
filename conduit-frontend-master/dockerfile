@@ -1,0 +1,30 @@
+#stage 1 node version + builder
+FROM node:20-alpine AS builder
+
+# erstellen vom Workdirectory
+WORKDIR /app
+
+# package json. kopieren
+COPY package*.json .
+
+# Abhängigkeiten aus package json. installieren
+RUN npm install
+
+# kopiert restlichen Projekt Code
+COPY . .
+
+# App kompilieren
+RUN npm run build
+
+# stage 2 
+FROM nginx:alpine
+
+# kopieren vom builder
+COPY --from=builder /app/dist/angular-conduit /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# umgebungsvariablen
+ARG APPLICATION_PORT=80
+ENV APPLICATION_PORT=${APPLICATION_PORT}
+EXPOSE ${APPLICATION_PORT}
