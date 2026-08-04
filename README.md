@@ -68,8 +68,6 @@ docker compose up -d
 ### Open the application
 http://<HOST_IP>:8282
 
-### Open the admin interface
-http://<HOST_IP>:8282/admin
 
 ## Usage
 
