@@ -1,22 +1,22 @@
-# stage 1 Python Version und  builder
+# stage one: python version and builder
 FROM python:3.5-slim AS builder
 
-# erstellen vom Workdirectory
+# create the workdirectory
 WORKDIR /app
 
-# requirements kopieren
+# copy requirements 
 COPY requirements.txt .
 
-# requirements installieren
+# install requirements 
 RUN pip install -r requirements.txt
 
 # stage 2 
 FROM python:3.5-slim
 
-# erstellen workdirecktory
+# create workdirecktory
 WORKDIR /app
 
-# kopieren von stage 1 installierte pakete und scripte
+# copy from stage 1 install packeges und scripts
 COPY --from=builder /usr/local/lib/python3.5/site-packages /usr/local/lib/python3.5/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
@@ -26,16 +26,16 @@ RUN useradd -m -r appuser && chown -R appuser:appuser /app
 
 COPY entrypoint.sh /entrypoint.sh
 
-# macht entrypoint.sh ausführbar
+# make entrypoint.sh executeble
 RUN chmod +x /entrypoint.sh && chown appuser:appuser /entrypoint.sh
 
-# standart port
+# default port
 ARG APPLICATION_PORT=8000
 
-# umgebungsvariablen
+# env variable
 ENV APPLICATION_PORT=${APPLICATION_PORT}
 
-# standart port
+# default port
 EXPOSE ${APPLICATION_PORT}
 
 USER appuser

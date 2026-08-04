@@ -2,7 +2,6 @@
 
 ## Table of Contents
 
-* [Description](#description)
 * [Prerequisites](#prerequisites)
 * [Quickstart](#quickstart)
 * [Usage](#usage)
@@ -10,23 +9,20 @@
     * [Container Restart Policy](#container-restart-policy)
     * [Secrets Management](#secrets-management)
 
-## Description
-
-This repository contains a legacy full-stack application consisting of a PostgreSQL database, a Django backend, and an Angular frontend. The project is fully containerized using Docker and can be started with Docker Compose.
 
 ## Prerequisites
 
 To install and run this environment, make sure the following software is installed on your system:
 
 - Docker (latest version)
-- Python (latest version)
+
 
 ## Quickstart
 
 ### Clone the repository
 
 ```bash
-git clone --recurse-submodules https://github.com/NicoMeyerDev/Conduit-Container.git
+git clone --recurse-submodules github.com/NicoMeyerDev/Conduit-Container.git
 ```
 
 ### Initialize submodules
@@ -48,8 +44,8 @@ Rename the provided example configuration file:
 ```bash
 cp example.env .env
 ```
-
-Edit the `.env` file and configure the required environment variables.
+> [!NOTE]
+> Edit the `.env` file and configure the required environment variables.
 
 At minimum you should set:
 
@@ -72,11 +68,8 @@ docker compose up -d
 ### Open the application
 http://<HOST_IP>:8282
 
-### Open the API
-http://<HOST_IP>:8282/api
-
 ### Open the admin interface
-http://<HOST_IP>:8282/api
+http://<HOST_IP>:8282/admin
 
 ## Usage
 

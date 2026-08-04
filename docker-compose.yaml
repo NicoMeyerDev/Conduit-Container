@@ -22,7 +22,7 @@ services:
     image: postgres:13
     restart: unless-stopped
     env_file:
-     - .env
+     - .env.db
     volumes:
      - postgres_data:/var/lib/postgresql/data
 
