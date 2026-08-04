@@ -1,7 +1,6 @@
 # Conduit Container
 
 ## Table of Contents
-
 * [Prerequisites](#prerequisites)
 * [Quickstart](#quickstart)
 * [Usage](#usage)
@@ -11,7 +10,6 @@
 
 
 ## Prerequisites
-
 To install and run this environment, make sure the following software is installed on your system:
 
 - Docker (latest version)
@@ -20,25 +18,16 @@ To install and run this environment, make sure the following software is install
 ## Quickstart
 
 ### Clone the repository
-
 ```bash
-git clone --recurse-submodules github.com/NicoMeyerDev/Conduit-Container.git
-```
-
-### Initialize submodules
-
-```bash
-git submodule update --init --recursive
+git clone git@github.com:NicoMeyerDev/Conduit-Container.git
 ```
 
 ### Navigate to the project
-
 ```bash
 cd Conduit-Container
 ```
 
 ### Configure the application
-
 Rename the provided example configuration file:
 
 ```bash
