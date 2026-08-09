@@ -33,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v7     
         with:
           context: conduit-backend-master
-          file: dockerfile
+          file: conduit-backend-master/dockerfile
           push: true
           tags: ghcr.io/${{ steps.owner.outputs.owner }}/conduit-backend:latest
 
@@ -41,7 +41,7 @@ jobs:
         uses: docker/build-push-action@v7 
         with:
           context: conduit-frontend-master
-          file: dockerfile
+          file: conduit-frontend-master/dockerfile
           push: true
           tags: ghcr.io/${{ steps.owner.outputs.owner }}/conduit-frontend:latest
 
