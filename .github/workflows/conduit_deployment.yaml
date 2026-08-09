@@ -23,13 +23,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set lowercase repository owner
+        id: owner
+        run: echo "owner=${OWNER,,}" >> "$GITHUB_OUTPUT"
+        env:
+          OWNER: ${{ github.repository_owner }}    
+
       - name: build & push-backend image
         uses: docker/build-push-action@v7     
         with:
           context: conduit-backend-master
           file: dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/conduit-backend:latest
+          tags: ghcr.io/${{ steps.owner.outputs.owner }}/conduit-backend:latest
 
       - name: build & pushfrontend image
         uses: docker/build-push-action@v7 
@@ -37,7 +43,7 @@ jobs:
           context: conduit-frontend-master
           file: duockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/conduit-frontend:latest
+          tags: ghcr.io/${{ steps.owner.outputs.owner }}/conduit-frontend:latest
 
       - name: connect to SSH
         uses: appleboy/ssh-action@v1
