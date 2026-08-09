@@ -41,7 +41,7 @@ jobs:
         uses: docker/build-push-action@v7 
         with:
           context: conduit-frontend-master
-          file: duockerfile
+          file: dockerfile
           push: true
           tags: ghcr.io/${{ steps.owner.outputs.owner }}/conduit-frontend:latest
 
