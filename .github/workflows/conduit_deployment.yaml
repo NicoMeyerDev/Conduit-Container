@@ -3,7 +3,6 @@ name: Conduit Deployment
 on:
   push:
     branches:
-      - main
       - setup-docker 
   workflow_dispatch:    
 
