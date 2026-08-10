@@ -7,7 +7,7 @@
     * [Data Persistence](#data-persistence)
     * [Container Restart Policy](#container-restart-policy)
     * [Secrets Management](#secrets-management)
-    * [Automatic deployments](#automatic-deployment)
+    * [Automatic deployment](#automatic-deployment)
 
 
 ## Prerequisites
@@ -73,11 +73,10 @@ All services are configured with `restart: unless-stopped`. This means container
 
 Sensitive configuration (database credentials, Django secret key) is never stored in the codebase. Instead, values are provided via a `.env` file, which is excluded from version control via `.gitignore`. Copy `example.env` to `.env` and fill in your own values before starting the application.
 
+
 ## Automatic Deployments
 
 Automate your rollout using **GitHub Actions** — no manual SSH login required.
-
----
 
 ### 1. Create the Workflow File
 
@@ -88,8 +87,8 @@ Create the following folder structure in your project:
 └── workflows/
     └── deployment.yaml
 ```
-
-> **Common mistake:** The folder must be named `workflows` (plural), otherwise GitHub Actions won't detect it.
+> [!WARNING]
+> Common mistake: The folder must be named `workflows` (plural), otherwise GitHub Actions won't detect it.
 
 Inside `deployment.yaml`, define these four sections:
 
@@ -100,8 +99,6 @@ Inside `deployment.yaml`, define these four sections:
 | **Jobs** | The tasks to run, and on which environment (e.g. `ubuntu-latest`) |
 | **Steps** | The individual actions executed one after another |
 
----
-
 ### 2. Secrets and Variables
 
 | Type | Encrypted? | Example |
@@ -109,9 +106,8 @@ Inside `deployment.yaml`, define these four sections:
 | **Secret** | Yes — never shown in plain text | SSH private key, password |
 | **Variable** | No — visible in the UI | GitHub username |
 
-> **Don't mix these up.** Sensitive login data belongs in **Secrets**, not in a plain `.env` file committed to the repo.
-
----
+> [!WARNING]
+> Don't mix these up. Sensitive login data belongs in **Secrets**, not in a plain `.env` file committed to the repo.
 
 ### 3. Adding GitHub Secrets
 
@@ -127,24 +123,14 @@ Inside `deployment.yaml`, define these four sections:
 | `SSH_USER` | Username on the SSH server |
 | `SSH_HOST` | Server address (IP or domain) |
 
----
-
-### 4. Adding a Variable
-
-Add a **variable** (not a secret) so image names resolve to your GitHub profile:
-
-- **Name:** `IMAGE_OWNER`
-- **Value:** your GitHub username
-
----
-
-### 5. Triggering the Deployment
+### 4. Triggering the Deployment
 
 | Method | How | Requirement |
 |---|---|---|
 | **Automatic** | Push a commit to the trigger branch | None — works out of the box |
 | **Manual** | Go to the **Actions** tab → **Run workflow** | Requires `workflow_dispatch:` under `on:` |
 
-> **Tip:** If the "Run workflow" button is missing, check that `workflow_dispatch:` is included in your trigger config.
+> [!TIP]
+> If the "Run workflow" button is missing, check that `workflow_dispatch:` is included in your trigger config.
 
 After triggering, open the **Actions** tab to watch the run live, step by step, including logs for each stage.

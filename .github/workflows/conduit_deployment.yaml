@@ -3,14 +3,18 @@ name: Conduit Deployment
 on:
   push:
     branches:
-      - Setup-docker
+      - main
+  workflow_dispatch:    
 
 permissions:
   contents: read
   packages: write
 
+env:
+  REGISTRY: ghcr.io
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -35,7 +39,9 @@ jobs:
           context: conduit-backend-master
           file: conduit-backend-master/dockerfile
           push: true
-          tags: ghcr.io/${{ steps.owner.outputs.owner }}/conduit-backend:latest
+          tags: | 
+            ghcr.io/${{ steps.owner.outputs.owner }}/conduit-backend:latest
+            ghcr.io/${{ github.repository_owner }}/conduit-backend:${{ github.sha }}
 
       - name: build & push frontend image
         uses: docker/build-push-action@v7 
@@ -43,7 +49,26 @@ jobs:
           context: conduit-frontend-master
           file: conduit-frontend-master/dockerfile
           push: true
-          tags: ghcr.io/${{ steps.owner.outputs.owner }}/conduit-frontend:latest
+          tags: |
+            ghcr.io/${{ steps.owner.outputs.owner }}/conduit-frontend:latest
+            ghcr.io/${{ github.repository_owner }}/conduit-frontend:${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Copy docker.compose.yaml to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker-compose.yaml"
+          target: "~/Conduit-Container/"
 
       - name: connect to SSH
         uses: appleboy/ssh-action@v1
@@ -54,5 +79,6 @@ jobs:
           script: |
             set -e
             cd Conduit-Container
+            docker compose down
             docker compose pull
             docker compose up -d
