@@ -61,13 +61,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      - name: Copy docker.compose.yaml to server
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env  
+
+      - name: Copy files to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "docker-compose.yaml"
+          source: "docker-compose.yaml,.env"
           target: "~/Conduit-Container/"
 
       - name: connect to SSH
