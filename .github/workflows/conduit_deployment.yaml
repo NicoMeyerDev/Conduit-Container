@@ -1,0 +1,87 @@
+name: Conduit Deployment
+
+on:
+  push:
+    branches:
+      - main 
+  workflow_dispatch:    
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set lowercase repository owner
+        id: owner
+        run: echo "owner=${OWNER,,}" >> "$GITHUB_OUTPUT"
+        env:
+          OWNER: ${{ github.repository_owner }}    
+
+      - name: build & push-backend image
+        uses: docker/build-push-action@v7     
+        with:
+          context: conduit-backend-master
+          file: conduit-backend-master/dockerfile
+          push: true
+          tags: | 
+            ghcr.io/${{ steps.owner.outputs.owner }}/conduit-backend:latest
+            ghcr.io/${{ github.repository_owner }}/conduit-backend:${{ github.sha }}
+
+      - name: build & push frontend image
+        uses: docker/build-push-action@v7 
+        with:
+          context: conduit-frontend-master
+          file: conduit-frontend-master/dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ steps.owner.outputs.owner }}/conduit-frontend:latest
+            ghcr.io/${{ github.repository_owner }}/conduit-frontend:${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env  
+
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker-compose.yaml,.env"
+          target: "~/Conduit-Container/"
+
+      - name: connect to SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            cd Conduit-Container
+            docker compose down
+            docker compose pull
+            docker compose up -d
