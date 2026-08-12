@@ -40,8 +40,8 @@ jobs:
           file: conduit-backend-master/dockerfile
           push: true
           tags: | 
-            ghcr.io/${{ steps.owner.outputs.owner }}/conduit-backend:latest
-            ghcr.io/${{ github.repository_owner }}/conduit-backend:${{ github.sha }}
+            ghcr.io/nicomeyerdev/conduit-backend:latest
+            ghcr.io/nicomeyerdev/conduit-backend:${{ github.sha }}
 
       - name: build & push frontend image
         uses: docker/build-push-action@v7 
@@ -50,8 +50,8 @@ jobs:
           file: conduit-frontend-master/dockerfile
           push: true
           tags: |
-            ghcr.io/${{ steps.owner.outputs.owner }}/conduit-frontend:latest
-            ghcr.io/${{ github.repository_owner }}/conduit-frontend:${{ github.sha }}
+            ghcr.io/nicomeyerdev/conduit-frontend:latest
+            ghcr.io/nicomeyerdev/conduit-frontend:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
